@@ -35,9 +35,8 @@ a:hover{color:oklch(0.88 0.10 70)}
     <div style="display:flex;flex-direction:column;gap:9px;font-size:11.5px;color:rgba(244,239,228,.42);line-height:1.45">
       <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">01</span><span>Главная, вечерний триггер</span></div>
       <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">02</span><span>Три вопроса о контексте</span></div>
-      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">03</span><span>Колода из семи карточек, свайпы</span></div>
-      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">04</span><span>Один вариант и «Смотреть»</span></div>
-      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">05</span><span>Плеер и «Не то, вернуться»</span></div>
+      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">03</span><span>Колода карточек — свайп вправо запускает</span></div>
+      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">04</span><span>Плеер и «Не то, вернуться»</span></div>
     </div>
     <div style="height:1px;background:rgba(244,239,228,.12);margin:4px 0"></div>
     <div style="font-size:11px;line-height:1.5;color:rgba(244,239,228,.32)">Свайпайте карточки мышью. Все кадры — сгенерированные референсы, названия фильмов вымышленные.</div>
@@ -185,7 +184,7 @@ a:hover{color:oklch(0.88 0.10 70)}
             <div style="font-family:'Unbounded',sans-serif;font-weight:600;font-size:29px;line-height:1.04;letter-spacing:-.01em;color:rgba(255,255,255,.96);text-transform:uppercase;text-wrap:balance">{{ top.title }}</div>
           </div>
 
-          <div ref="{{ likeRef }}" style="position:absolute;top:96px;left:22px;opacity:0;transform:rotate(-9deg);padding:7px 14px;border:2.5px solid oklch(0.82 0.16 145);border-radius:10px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:17px;color:oklch(0.86 0.16 145);letter-spacing:.04em">ИНТЕРЕСНО</div>
+          <div ref="{{ likeRef }}" style="position:absolute;top:96px;left:22px;opacity:0;transform:rotate(-9deg);padding:7px 14px;border:2.5px solid oklch(0.82 0.16 145);border-radius:10px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:17px;color:oklch(0.86 0.16 145);letter-spacing:.04em">СМОТРЕТЬ</div>
           <div ref="{{ nopeRef }}" style="position:absolute;top:96px;right:22px;opacity:0;transform:rotate(9deg);padding:7px 14px;border:2.5px solid oklch(0.70 0.17 25);border-radius:10px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:17px;color:oklch(0.76 0.17 25);letter-spacing:.04em">МИМО</div>
 
           <div style="position:absolute;left:0;right:0;bottom:0;padding:22px;background:linear-gradient(to top,rgba(8,7,5,.94) 8%,rgba(8,7,5,.55) 55%,transparent)">
@@ -207,12 +206,26 @@ a:hover{color:oklch(0.88 0.10 70)}
 
       <div style="padding:8px 22px 12px;display:flex;align-items:center;justify-content:center;gap:16px">
         <button onClick="{{ swipeLeft }}" style="width:56px;height:56px;flex:none;border-radius:50%;cursor:pointer;background:rgba(244,239,228,.07);border:1px solid rgba(244,239,228,.16);color:rgba(244,239,228,.75);font-size:20px;font-family:'Golos Text',sans-serif" style-hover="background:rgba(244,239,228,.14)">✕</button>
-        <button onClick="{{ swipeRight }}" style="flex:1;height:56px;border-radius:28px;cursor:pointer;background:rgba(244,239,228,.09);border:1px solid rgba(244,239,228,.2);color:#f4efe4;font-family:'Golos Text',sans-serif;font-size:15px;font-weight:600" style-hover="background:rgba(244,239,228,.16)">Интересно</button>
+        <button onClick="{{ saveForLater }}" style="flex:1;height:56px;border-radius:28px;cursor:pointer;background:rgba(244,239,228,.09);border:1px solid rgba(244,239,228,.2);color:#f4efe4;font-family:'Golos Text',sans-serif;font-size:15px;font-weight:600" style-hover="background:rgba(244,239,228,.16)">Отложить</button>
         <button onClick="{{ playNow }}" style="flex:1.15;height:56px;border-radius:28px;cursor:pointer;background:#f4efe4;border:none;color:#14120c;font-family:'Golos Text',sans-serif;font-size:15.5px;font-weight:700" style-hover="background:#fff">Смотреть</button>
       </div>
       <div style="padding:0 22px 20px;text-align:center">
         <button onClick="{{ decideForMe }}" style="background:none;border:none;cursor:pointer;color:rgba(244,239,228,.35);font-family:'Golos Text',sans-serif;font-size:12.5px">Хватит, выбери за меня</button>
       </div>
+    </div>
+    </sc-if>
+
+    <!-- ВСЁ МИМО -->
+    <sc-if value="{{ isAllPassed }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;padding:46px 22px 26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(110% 60% at 50% 20%,#241f14,#100e08 70%);text-align:center;animation:fadeIn .3s both">
+      <div style="font-family:'Unbounded',sans-serif;font-weight:400;font-size:24px;line-height:1.2;color:#f4efe4">Ни одно не подошло</div>
+      <div style="font-size:13.5px;line-height:1.5;color:rgba(244,239,228,.45);max-width:280px;text-wrap:pretty">Похоже, мы неверно прочитали вечер. Что сменить?</div>
+      <div style="display:flex;flex-direction:column;gap:9px;width:100%">
+        <sc-for list="{{ changeOptions }}" as="o" hint-placeholder-count="3">
+          <button onClick="{{ o.pick }}" style="width:100%;cursor:pointer;background:rgba(244,239,228,.07);border:1px solid rgba(244,239,228,.16);border-radius:14px;padding:15px;font-family:'Golos Text',sans-serif;font-size:14px;font-weight:500;color:#f4efe4" style-hover="background:rgba(244,239,228,.12)">{{ o.label }}</button>
+        </sc-for>
+      </div>
+      <button onClick="{{ reset }}" style="margin-top:2px;cursor:pointer;background:none;border:none;color:rgba(244,239,228,.4);font-family:'Golos Text',sans-serif;font-size:12.5px">На главную</button>
     </div>
     </sc-if>
 
@@ -242,9 +255,6 @@ a:hover{color:oklch(0.88 0.10 70)}
         </div>
         <button onClick="{{ play }}" style="width:100%;border:none;cursor:pointer;background:#f4efe4;color:#14120c;font-family:'Golos Text',sans-serif;font-size:17px;font-weight:700;padding:19px;border-radius:17px;margin-bottom:11px" style-hover="background:#fff">Смотреть</button>
         <div style="display:flex;gap:10px">
-          <sc-if value="{{ fromMode }}" hint-placeholder-val="{{ true }}">
-          <button onClick="{{ swap }}" style="flex:1;cursor:{{ swapCursor }};background:rgba(244,239,228,.07);border:1px solid rgba(244,239,228,.16);border-radius:14px;padding:14px;font-family:'Golos Text',sans-serif;font-size:13.5px;font-weight:500;color:{{ swapColor }}" style-hover="background:rgba(244,239,228,.12)">{{ swapLabel }}</button>
-          </sc-if>
           <button onClick="{{ postpone }}" style="flex:1;cursor:pointer;background:none;border:1px solid rgba(244,239,228,.16);border-radius:14px;padding:14px;font-family:'Golos Text',sans-serif;font-size:13.5px;font-weight:500;color:rgba(244,239,228,.65)" style-hover="background:rgba(244,239,228,.06)">Отложить</button>
         </div>
         <div style="text-align:center;font-size:11.5px;color:rgba(244,239,228,.3);margin-top:16px">{{ finalNote }}</div>
@@ -302,7 +312,7 @@ a:hover{color:oklch(0.88 0.10 70)}
       <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Экран</span><span style="color:#f4efe4;text-align:right">{{ dbgScreen }}</span></div>
       <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Контекст</span><span style="color:#f4efe4;text-align:right">{{ dbgCtx }}</span></div>
       <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Карточек просмотрено</span><span style="color:#f4efe4">{{ dbgSeen }}</span></div>
-      <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Замен использовано</span><span style="color:#f4efe4">{{ dbgSwaps }}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Отложено</span><span style="color:#f4efe4">{{ dbgSaved }}</span></div>
       <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Время в режиме</span><span style="color:#f4efe4;font-variant-numeric:tabular-nums">{{ elapsedChoice }}</span></div>
     </div>
     <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,228,.35);margin-top:6px">События воронки</div>
@@ -368,8 +378,8 @@ class Component extends DCLogic {
     try { standalone = new URLSearchParams(window.location.search).get('phone') === '1'; } catch(e){}
     this.state = {
       screen:'home', scrolled:false, qi:0, ctx:{}, last, standalone,
-      deck:[], di:0, liked:[], seen:0, pick:null, swaps:0,
-      played:0, safety:300, t0:null, tick:0, log:[], fallback:'', pickSource:'mode'
+      deck:[], di:0, seen:0, pick:null, savedIds:[], origin:'deck', singleChange:false,
+      played:0, safety:300, t0:null, tick:0, log:[], fallback:''
     };
     this.cardRef = React.createRef();
     this.likeRef = React.createRef();
@@ -444,7 +454,7 @@ class Component extends DCLogic {
   // ——— переходы
   go(screen){ this.setState({screen}); }
   reset = () => {
-    this.setState({screen:'home', scrolled:false, qi:0, ctx:{}, deck:[], di:0, liked:[], seen:0, pick:null, swaps:0, played:0, safety:300, t0:null, fallback:'', pickSource:'mode'});
+    this.setState({screen:'home', scrolled:false, qi:0, ctx:{}, deck:[], di:0, seen:0, pick:null, savedIds:[], origin:'deck', singleChange:false, played:0, safety:300, t0:null, fallback:''});
     this.ev('reset_prototype');
   };
   openStandalone = () => {
@@ -458,28 +468,35 @@ class Component extends DCLogic {
   startFlow = () => { this.setState({screen:'q', qi:0, ctx:{}, t0:Date.now()}); this.ev('mode_entered'); };
   openFilm(f){
     this.ev('catalog_card_opened:' + f.id);
-    this.setState({pick: f, pickSource: 'catalog', screen: 'final', swaps: 0});
+    this.setState({pick: f, origin:'catalog', screen: 'final'});
   }
   back = () => {
     const s = this.state;
-    if (s.screen === 'final') { this.setState({screen: s.pickSource === 'catalog' ? 'home' : 'deck'}); return; }
+    if (s.screen === 'final') { this.setState({screen:'home'}); return; }
     if (s.screen === 'deck') { this.setState({screen:'q', qi:2}); return; }
+    if (s.screen === 'q' && s.singleChange) { this.setState({screen:'allPassed', singleChange:false}); return; }
     if (s.qi > 0) { this.setState({qi: s.qi - 1}); return; }
     this.setState({screen:'home'});
   };
   answer(key, v){
     const ctx = Object.assign({}, this.state.ctx, {[key]: v});
     this.ev('context_answered:' + key);
+    if (this.state.singleChange) { this.finishCtx(ctx); return; }
     if (this.state.qi < 2) { this.setState({ctx, qi: this.state.qi + 1}); return; }
     this.finishCtx(ctx);
   }
   finishCtx(ctx){
     try { localStorage.setItem('kadr-vecher-last', JSON.stringify(ctx)); } catch(e){}
     const {deck, fallback} = this.build(ctx);
-    this.setState({ctx, deck, di:0, liked:[], seen:0, fallback, screen:'deck', last:ctx});
+    this.setState({ctx, deck, di:0, seen:0, fallback, screen:'deck', last:ctx, origin:'deck', singleChange:false});
     this.ev('deck_built:' + deck.length);
     if (fallback) this.ev('fallback_relaxed');
   }
+  changeCondition = (key) => {
+    this.ev('change_condition:' + key);
+    const qi = key === 'time' ? 0 : key === 'company' ? 1 : 2;
+    this.setState({screen:'q', qi, singleChange:true});
+  };
   skipQ = () => {
     const s = this.state, q = QUESTIONS[s.qi];
     const guess = q.key === 'time' ? 100 : q.key === 'company' ? 'solo' : null;
@@ -536,50 +553,51 @@ class Component extends DCLogic {
   commit(dir){
     const s = this.state, f = s.deck[s.di];
     if (!f) return;
-    this.ev((dir > 0 ? 'card_liked:' : 'card_passed:') + f.id);
-    const liked = dir > 0 ? s.liked.concat([f]) : s.liked;
     const di = s.di + 1, seen = s.seen + 1;
     this.clearCard();
-    if (liked.length >= 2 || di >= s.deck.length) {
-      const pick = liked[0] || s.deck[0];
-      this.setState({liked, di, seen, pick, screen:'final', pickSource:'mode'});
-      this.ev('final_shown:' + pick.id);
-    } else {
-      this.setState({liked, di, seen});
+    if (dir > 0) {
+      this.ev('watch_started:' + f.id);
+      this.setState({di, seen, pick: f, origin:'deck', screen:'player', played:0, safety:300});
+      return;
     }
+    this.ev('card_passed:' + f.id);
+    if (di >= s.deck.length) {
+      this.setState({di, seen, screen:'allPassed'});
+      this.ev('deck_exhausted_no_pick');
+      return;
+    }
+    this.setState({di, seen});
   }
-  playNow = () => {
-    const s = this.state, f = s.deck[s.di];
-    if (!f) return;
-    this.ev('play_from_deck:' + f.id);
-    this.setState({pick: f, screen:'player', played:0, safety:300});
-  };
+  playNow = () => { this.fly(1); };
   swipeLeft = () => { this.fly(-1); };
   swipeRight = () => { this.fly(1); };
+  saveForLater = () => {
+    const s = this.state, f = s.deck[s.di];
+    if (!f) return;
+    this.ev('saved_for_later:' + f.id);
+    const di = s.di + 1, seen = s.seen + 1, savedIds = s.savedIds.concat([f.id]);
+    this.clearCard();
+    if (di >= s.deck.length) { this.setState({di, seen, savedIds, screen:'allPassed'}); this.ev('deck_exhausted_no_pick'); return; }
+    this.setState({di, seen, savedIds});
+  };
   decideForMe = () => {
-    const s = this.state, pick = s.liked[0] || s.deck[s.di] || s.deck[0];
-    this.setState({pick, screen:'final', pickSource:'mode'});
-    this.ev('auto_pick:' + (pick ? pick.id : '—'));
+    const s = this.state, f = s.deck[s.di];
+    if (!f) { this.ev('auto_pick:—'); return; }
+    this.ev('auto_pick:' + f.id);
+    this.setState({pick: f, origin:'deck', screen:'player', di: s.di + 1, seen: s.seen + 1, played:0, safety:300});
   };
 
-  swap = () => {
-    const s = this.state;
-    if (s.swaps >= 2) { this.ev('swap_denied'); return; }
-    const used = {}; if (s.pick) used[s.pick.id] = 1; s.liked.forEach(f => used[f.id] = 1);
-    const next = s.deck.filter(f => !used[f.id])[0] || s.deck.find(f => !s.pick || f.id !== s.pick.id);
-    if (!next) return;
-    this.setState({pick: next, swaps: s.swaps + 1, liked: s.liked.concat([next])});
-    this.ev('variant_swapped:' + next.id);
-  };
   postpone = () => { this.setState({screen:'saved'}); this.ev('postponed'); };
   play = () => { this.setState({screen:'player', played:0, safety:300}); this.ev('play_started:' + (this.state.pick ? this.state.pick.id : '')); };
   notIt = () => {
     const s = this.state;
     this.ev('early_exit_used');
-    const used = {}; if (s.pick) used[s.pick.id] = 1;
-    const rest = s.deck.filter(f => !used[f.id]);
-    if (rest.length) { this.setState({pick: rest[0], screen:'final', pickSource:'mode', played:0, safety:300}); this.ev('replacement_offered:' + rest[0].id); }
-    else this.setState({screen:'deck', di:0, played:0, safety:300});
+    if (s.origin === 'deck' && s.di < s.deck.length) {
+      this.setState({screen:'deck', played:0, safety:300});
+      this.ev('returned_to_deck');
+      return;
+    }
+    this.setState({screen:'home', played:0, safety:300});
   };
 
   mmss(n){ return Math.floor(n/60) + ':' + String(n%60).padStart(2,'0'); }
@@ -603,13 +621,18 @@ class Component extends DCLogic {
       outerExtra: s.standalone ? 'padding:0;gap:0' : '',
       phoneExtra: s.standalone ? 'width:100vw;height:100vh;max-width:100vw;max-height:100vh;border-radius:0;box-shadow:none' : '',
       openStandalone: this.openStandalone,
-      isHome: S === 'home', isQ: S === 'q', isDeck: S === 'deck', isFinal: S === 'final', isPlayer: S === 'player', isSaved: S === 'saved',
+      isHome: S === 'home', isQ: S === 'q', isDeck: S === 'deck', isAllPassed: S === 'allPassed', isFinal: S === 'final', isPlayer: S === 'player', isSaved: S === 'saved',
       showTrigger: s.scrolled,
-      triggerNote: 'Вечер, 20:45 — два экрана без запуска',
+      triggerNote: 'Вечер, 20:45 — три вопроса, потом сразу запуск',
       homeRows: rows,
       startFlow: this.startFlow, back: this.back, skipQ: this.skipQ, useLast: this.useLast, reset: this.reset,
       onHomeScroll: this.onHomeScroll,
-      heroOpen: () => { this.setState({pick: FILMS[3], pickSource:'catalog'}); this.ev('hero_play:f4'); this.setState({screen:'player', played:0, safety:300}); },
+      heroOpen: () => { this.ev('hero_play:f4'); this.setState({pick: FILMS[3], origin:'catalog', screen:'player', played:0, safety:300}); },
+      changeOptions: [
+        {key:'time', label:'Другое время: ' + (TIME_LABEL[s.ctx.time] || 'время не важно')},
+        {key:'company', label:'Другая компания: ' + (COMPANY_LABEL[s.ctx.company] || 'один')},
+        {key:'mood', label:'Другое настроение: ' + (s.ctx.mood ? MOOD_LABEL[s.ctx.mood] : 'любое')}
+      ].map(o => Object.assign({}, o, {pick: () => this.changeCondition(o.key)})),
 
       qStep: q.step, qTitle: q.title, qSub: q.sub,
       qBars: QUESTIONS.map((_, i) => ({c: i <= s.qi ? 'oklch(0.80 0.13 70)' : 'rgba(244,239,228,.14)'})),
@@ -628,30 +651,26 @@ class Component extends DCLogic {
       hasNext: !!s.deck[s.di + 1], hasThird: !!s.deck[s.di + 2],
       cardRef: this.cardRef, likeRef: this.likeRef, nopeRef: this.nopeRef,
       onDown: this.onDown, onMove: this.onMove, onUp: this.onUp,
-      swipeLeft: this.swipeLeft, swipeRight: this.swipeRight, decideForMe: this.decideForMe, playNow: this.playNow,
+      swipeLeft: this.swipeLeft, swipeRight: this.swipeRight, decideForMe: this.decideForMe, playNow: this.playNow, saveForLater: this.saveForLater,
       deckCounter: (this.props.showCounter ?? true) ? 'осталось ' + Math.max(0, s.deck.length - s.di) + ' из ' + s.deck.length : '',
       chips: [TIME_LABEL[s.ctx.time] || 'время не важно', COMPANY_LABEL[s.ctx.company] || 'один', s.ctx.mood ? MOOD_LABEL[s.ctx.mood] : 'настроение любое'],
       showFallback: !!s.fallback, fallbackText: s.fallback,
 
       pick,
-      play: this.play, swap: this.swap, postpone: this.postpone, notIt: this.notIt,
-      swapLabel: s.swaps >= 2 ? 'Замен больше нет' : 'Другой вариант · ' + (2 - s.swaps),
-      swapColor: s.swaps >= 2 ? 'rgba(244,239,228,.28)' : '#f4efe4',
-      swapCursor: s.swaps >= 2 ? 'not-allowed' : 'pointer',
+      play: this.play, postpone: this.postpone, notIt: this.notIt,
       elapsedChoice: this.mmss(el),
-      fromMode: s.pickSource !== 'catalog',
-      finalTag: s.pickSource === 'catalog' ? 'Из каталога' : 'Ваш вечер собран',
-      finalDot: s.pickSource === 'catalog' ? 'rgba(255,255,255,.5)' : 'oklch(0.82 0.16 145)',
-      finalNote: s.pickSource === 'catalog' ? 'Обычная карточка каталога — здесь выбор делаете вы' : 'Выбор занял ' + this.mmss(el) + ' · передумать можно первые 5 минут',
+      finalTag: 'Из каталога',
+      finalDot: 'rgba(255,255,255,.5)',
+      finalNote: 'Обычная карточка каталога — здесь выбор делаете вы',
 
       showSafety: s.safety > 0,
       safetyLeft: this.mmss(s.safety),
       played: s.played, playedLabel: this.mmss(s.played),
       progressW: (s.pick ? Math.min(100, s.played / (s.pick.min * 60) * 100 * 40) : 0) + '%',
 
-      dbgScreen: {home:'Главная', q:'Контекст', deck:'Колода', final:'Финал', player:'Плеер', saved:'Отложено'}[S],
+      dbgScreen: {home:'Главная', q:'Контекст', deck:'Колода', allPassed:'Всё мимо', final:'Финал', player:'Плеер', saved:'Отложено'}[S],
       dbgCtx: [TIME_LABEL[s.ctx.time], COMPANY_LABEL[s.ctx.company], MOOD_LABEL[s.ctx.mood]].filter(Boolean).join(' · ') || '—',
-      dbgSeen: s.seen, dbgSwaps: s.swaps,
+      dbgSeen: s.seen, dbgSaved: s.savedIds.length,
       log: s.log, logEmpty: s.log.length === 0
     };
   }
