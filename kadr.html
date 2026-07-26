@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#17150f;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:oklch(0.80 0.13 70);text-decoration:none}
+a:hover{color:oklch(0.88 0.10 70)}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulseDot{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;gap:40px;padding:32px;background:radial-gradient(120% 80% at 50% 0%, #22201a 0%, #131109 70%);font-family:'Golos Text',system-ui,sans-serif;{{ outerExtra }}">
+
+  <sc-if value="{{ !standalone }}" hint-placeholder-val="{{ true }}">
+  <div style="width:250px;display:flex;flex-direction:column;gap:14px;align-self:flex-start;padding-top:8px">
+    <div style="font-family:'Unbounded',sans-serif;font-weight:800;font-size:15px;letter-spacing:.16em;color:oklch(0.82 0.13 70)">КАДР</div>
+    <div style="font-family:'Unbounded',sans-serif;font-weight:400;font-size:26px;line-height:1.1;color:#f4efe4">Вечер<br>за 60 секунд</div>
+    <div style="font-size:12.5px;line-height:1.55;color:rgba(244,239,228,.5);text-wrap:pretty">Интерактивный прототип MVP: режим быстрого выбора контента. Кликабельный сквозной сценарий — от триггера на главной до плеера и страховки первых пяти минут.</div>
+    <div style="height:1px;background:rgba(244,239,228,.12);margin:4px 0"></div>
+    <div style="display:flex;flex-direction:column;gap:9px;font-size:11.5px;color:rgba(244,239,228,.42);line-height:1.45">
+      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">01</span><span>Главная, вечерний триггер</span></div>
+      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">02</span><span>Три вопроса о контексте</span></div>
+      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">03</span><span>Колода из семи карточек, свайпы</span></div>
+      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">04</span><span>Один вариант и «Смотреть»</span></div>
+      <div style="display:flex;gap:8px"><span style="color:oklch(0.80 0.13 70);font-variant-numeric:tabular-nums">05</span><span>Плеер и «Не то, вернуться»</span></div>
+    </div>
+    <div style="height:1px;background:rgba(244,239,228,.12);margin:4px 0"></div>
+    <div style="font-size:11px;line-height:1.5;color:rgba(244,239,228,.32)">Свайпайте карточки мышью. Все кадры — сгенерированные референсы, названия фильмов вымышленные.</div>
+    <button onClick="{{ reset }}" style="margin-top:2px;align-self:flex-start;background:none;border:1px solid rgba(244,239,228,.2);color:rgba(244,239,228,.6);font-family:'Golos Text',sans-serif;font-size:11.5px;padding:7px 12px;border-radius:999px;cursor:pointer" style-hover="border-color:rgba(244,239,228,.45);color:#f4efe4">Начать сценарий заново</button>
+    <button onClick="{{ openStandalone }}" style="align-self:flex-start;background:none;border:1px solid rgba(244,239,228,.2);color:rgba(244,239,228,.6);font-family:'Golos Text',sans-serif;font-size:11.5px;padding:7px 12px;border-radius:999px;cursor:pointer" style-hover="border-color:rgba(244,239,228,.45);color:#f4efe4">Открыть телефон в отдельном окне</button>
+  </div>
+  </sc-if>
+
+  <div style="width:390px;height:844px;flex:none;border-radius:34px;overflow:hidden;position:relative;background:#100e08;box-shadow:0 40px 80px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(244,239,228,.09);{{ phoneExtra }}">
+
+    <div style="position:absolute;top:0;left:0;right:0;height:46px;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:12.5px;font-weight:600;color:rgba(244,239,228,.82);pointer-events:none">
+      <span style="font-variant-numeric:tabular-nums">{{ clock }}</span>
+      <span style="display:flex;gap:5px;align-items:center">
+        <span style="width:15px;height:8px;border:1px solid rgba(244,239,228,.6);border-radius:2px;display:inline-block"></span>
+        <span style="width:22px;height:9px;border:1px solid rgba(244,239,228,.6);border-radius:2px;display:inline-block;position:relative"><span style="position:absolute;inset:1.5px;right:6px;background:rgba(244,239,228,.75);border-radius:1px;display:block"></span></span>
+      </span>
+    </div>
+
+    <!-- ГЛАВНАЯ -->
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column">
+      <div onScroll="{{ onHomeScroll }}" style="position:absolute;inset:0;overflow-y:auto;padding:46px 0 120px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 18px">
+          <div style="font-family:'Unbounded',sans-serif;font-weight:800;font-size:17px;letter-spacing:.14em;color:oklch(0.82 0.13 70)">КАДР</div>
+          <div style="display:flex;gap:14px;align-items:center">
+            <span style="width:17px;height:17px;border:1.6px solid rgba(244,239,228,.55);border-radius:50%;display:block"></span>
+            <span style="width:24px;height:24px;border-radius:50%;background:oklch(0.55 0.06 70);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#f4efe4">А</span>
+          </div>
+        </div>
+
+        <div style="margin:0 20px 26px;border-radius:20px;overflow:hidden;position:relative;height:380px;background:linear-gradient(155deg,#3a2a4d 0%,#1b1526 55%,#0f0c14 100%);background-image:url(stills/f4-real.png);background-size:cover;background-position:center 30%">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(6,5,10,.45),transparent 40%)"></div>
+          <div style="position:absolute;left:0;right:0;top:44px;text-align:center;font-family:'Unbounded',sans-serif;font-weight:400;font-size:34px;line-height:1.02;letter-spacing:-.01em;color:#efe7f5;padding:0 26px">ПОСЛЕДНЕЕ<br>ЛЕТО<br>НА ЗЕМЛЕ</div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:20px;background:linear-gradient(to top,rgba(10,8,14,.95),transparent)">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(239,231,245,.55);margin-bottom:7px">Премьера · Драма · 2 ч 14 мин</div>
+            <div style="display:flex;gap:9px">
+              <div onClick="{{ heroOpen }}" style="flex:1;cursor:pointer;background:#f4efe4;color:#14120c;text-align:center;padding:12px;border-radius:12px;font-weight:600;font-size:14px">Смотреть</div>
+              <div style="width:46px;background:rgba(244,239,228,.14);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#f4efe4;font-size:19px">+</div>
+            </div>
+          </div>
+        </div>
+
+        <sc-for list="{{ homeRows }}" as="row" hint-placeholder-count="3">
+          <div style="margin-bottom:26px">
+            <div style="padding:0 20px 12px;display:flex;align-items:baseline;gap:8px">
+              <span style="font-size:15px;font-weight:600;color:#f4efe4">{{ row.title }}</span>
+              <span style="font-size:12px;color:rgba(244,239,228,.35)">{{ row.note }}</span>
+            </div>
+            <div style="display:flex;gap:11px;overflow-x:auto;padding:0 20px">
+              <sc-for list="{{ row.items }}" as="f" hint-placeholder-count="4">
+                <div onClick="{{ f.open }}" style="width:116px;flex:none;cursor:pointer" style-hover="opacity:.82">
+                  <div style="height:170px;border-radius:12px;overflow:hidden;position:relative;background:{{ f.g }};background-image:url({{ f.img }});background-size:cover;background-position:center">
+                    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(6,5,4,.55),transparent 60%)"></div>
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;padding:11px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:13px;line-height:1.08;color:rgba(255,255,255,.93);text-transform:uppercase">{{ f.title }}</div>
+                  </div>
+                  <div style="margin-top:7px;font-size:11.5px;color:rgba(244,239,228,.42)">{{ f.short }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+
+        <div style="padding:6px 20px 0;font-size:11.5px;line-height:1.5;color:rgba(244,239,228,.22)">Прототип. Каталог и рекомендации не меняются — меняется процедура выбора.</div>
+      </div>
+
+      <sc-if value="{{ showTrigger }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:0;right:0;bottom:0;padding:18px 20px 26px;background:linear-gradient(to top,rgba(16,14,8,.99) 45%,rgba(16,14,8,0));animation:riseIn .34s cubic-bezier(.2,.8,.2,1) both">
+          <div style="display:flex;align-items:center;gap:7px;justify-content:center;margin-bottom:11px;font-size:11.5px;color:rgba(244,239,228,.45)">
+            <span style="width:5px;height:5px;border-radius:50%;background:oklch(0.80 0.13 70);animation:pulseDot 1.8s infinite"></span>
+            <span>{{ triggerNote }}</span>
+          </div>
+          <button onClick="{{ startFlow }}" style="width:100%;border:none;cursor:pointer;background:oklch(0.80 0.13 70);color:#1a1508;font-family:'Golos Text',sans-serif;font-size:16px;font-weight:600;padding:17px;border-radius:16px;box-shadow:0 14px 30px -10px oklch(0.80 0.13 70 / .5)" style-hover="background:oklch(0.85 0.13 70)">Не знаю, что посмотреть</button>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- КОНТЕКСТ -->
+    <sc-if value="{{ isQ }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;padding:46px 22px 26px;display:flex;flex-direction:column;background:radial-gradient(110% 60% at 50% 0%,#241f14,#100e08 70%)">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 22px">
+        <button onClick="{{ back }}" style="background:none;border:none;cursor:pointer;color:rgba(244,239,228,.55);font-family:'Golos Text',sans-serif;font-size:13.5px;padding:0">← Назад</button>
+        <button onClick="{{ skipQ }}" style="background:none;border:none;cursor:pointer;color:rgba(244,239,228,.4);font-family:'Golos Text',sans-serif;font-size:13.5px;padding:0">Пропустить</button>
+      </div>
+
+      <div style="display:flex;gap:5px;margin-bottom:30px">
+        <sc-for list="{{ qBars }}" as="b" hint-placeholder-count="3">
+          <div style="flex:1;height:2.5px;border-radius:2px;background:{{ b.c }}"></div>
+        </sc-for>
+      </div>
+
+      <div style="font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.80 0.13 70);margin-bottom:12px">{{ qStep }}</div>
+      <div style="font-family:'Unbounded',sans-serif;font-weight:400;font-size:27px;line-height:1.15;color:#f4efe4;margin-bottom:9px;text-wrap:pretty">{{ qTitle }}</div>
+      <div style="font-size:13.5px;line-height:1.5;color:rgba(244,239,228,.42);margin-bottom:26px">{{ qSub }}</div>
+
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <sc-for list="{{ qOptions }}" as="o" hint-placeholder-count="3">
+          <button onClick="{{ o.pick }}" style="display:flex;align-items:center;gap:14px;text-align:left;cursor:pointer;background:{{ o.bg }};border:1px solid {{ o.bd }};border-radius:16px;padding:17px 18px;font-family:'Golos Text',sans-serif;color:#f4efe4" style-hover="border-color:oklch(0.80 0.13 70 / .6)">
+            <span style="font-family:'Unbounded',sans-serif;font-size:19px;font-weight:400;color:oklch(0.80 0.13 70);min-width:30px">{{ o.icon }}</span>
+            <span style="display:flex;flex-direction:column;gap:3px">
+              <span style="font-size:15.5px;font-weight:600">{{ o.label }}</span>
+              <span style="font-size:12px;color:rgba(244,239,228,.42)">{{ o.hint }}</span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="flex:1"></div>
+      <sc-if value="{{ hasLast }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ useLast }}" style="width:100%;cursor:pointer;background:rgba(244,239,228,.07);border:1px solid rgba(244,239,228,.16);border-radius:14px;padding:15px;font-family:'Golos Text',sans-serif;font-size:14.5px;font-weight:500;color:#f4efe4" style-hover="background:rgba(244,239,228,.12)">Как в прошлый вечер · {{ lastSummary }}</button>
+      </sc-if>
+      <div style="text-align:center;font-size:11.5px;color:rgba(244,239,228,.28);margin-top:14px">Три вопроса, десять секунд. Ответы запомним.</div>
+    </div>
+    </sc-if>
+
+    <!-- КОЛОДА -->
+    <sc-if value="{{ isDeck }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;padding:46px 0 0;display:flex;flex-direction:column;background:radial-gradient(120% 55% at 50% 100%,#211c12,#100e08 70%)">
+      <div style="padding:10px 22px 0;display:flex;align-items:center;justify-content:space-between">
+        <button onClick="{{ back }}" style="background:none;border:none;cursor:pointer;color:rgba(244,239,228,.5);font-family:'Golos Text',sans-serif;font-size:13.5px;padding:0">← Условия</button>
+        <div style="font-size:12px;color:rgba(244,239,228,.45);font-variant-numeric:tabular-nums">{{ deckCounter }}</div>
+      </div>
+
+      <div style="padding:12px 22px 14px;display:flex;gap:7px;flex-wrap:wrap">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3">
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:999px;background:rgba(244,239,228,.08);color:rgba(244,239,228,.62);border:1px solid rgba(244,239,228,.1)">{{ c }}</span>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ showFallback }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:0 22px 12px;padding:12px 14px;border-radius:13px;background:oklch(0.80 0.13 70 / .1);border:1px solid oklch(0.80 0.13 70 / .28);font-size:12.5px;line-height:1.45;color:oklch(0.88 0.08 70)">{{ fallbackText }}</div>
+      </sc-if>
+
+      <div style="flex:1;position:relative;margin:0 22px">
+        <sc-if value="{{ hasThird }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:12px;right:12px;top:16px;bottom:32px;border-radius:22px;background:{{ third.g }};background-image:url({{ third.img }});background-size:cover;background-position:center;opacity:.3;transform:scale(.93)"></div>
+        </sc-if>
+        <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:6px;right:6px;top:8px;bottom:24px;border-radius:22px;overflow:hidden;background:{{ next.g }};background-image:url({{ next.img }});background-size:cover;background-position:center;opacity:.55;transform:scale(.965)"></div>
+        </sc-if>
+
+        <div ref="{{ cardRef }}" onPointerDown="{{ onDown }}" onPointerMove="{{ onMove }}" onPointerUp="{{ onUp }}" onPointerCancel="{{ onUp }}" style="position:absolute;left:0;right:0;top:0;bottom:16px;border-radius:24px;overflow:hidden;background:{{ top.g }};background-image:url({{ top.img }});background-size:cover;background-position:center;cursor:grab;touch-action:none;user-select:none;box-shadow:0 24px 50px -18px rgba(0,0,0,.85);will-change:transform">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(6,5,4,.5),transparent 32%)"></div>
+          <div style="position:absolute;left:0;right:0;top:0;padding:24px 22px 0">
+            <div style="font-family:'Unbounded',sans-serif;font-weight:600;font-size:29px;line-height:1.04;letter-spacing:-.01em;color:rgba(255,255,255,.96);text-transform:uppercase;text-wrap:balance">{{ top.title }}</div>
+          </div>
+
+          <div ref="{{ likeRef }}" style="position:absolute;top:96px;left:22px;opacity:0;transform:rotate(-9deg);padding:7px 14px;border:2.5px solid oklch(0.82 0.16 145);border-radius:10px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:17px;color:oklch(0.86 0.16 145);letter-spacing:.04em">ИНТЕРЕСНО</div>
+          <div ref="{{ nopeRef }}" style="position:absolute;top:96px;right:22px;opacity:0;transform:rotate(9deg);padding:7px 14px;border:2.5px solid oklch(0.70 0.17 25);border-radius:10px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:17px;color:oklch(0.76 0.17 25);letter-spacing:.04em">МИМО</div>
+
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:22px;background:linear-gradient(to top,rgba(8,7,5,.94) 8%,rgba(8,7,5,.55) 55%,transparent)">
+            <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+              <span style="font-size:11.5px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.14);color:rgba(255,255,255,.9)">{{ top.dur }}</span>
+              <span style="font-size:11.5px;padding:5px 10px;border-radius:999px;background:oklch(0.80 0.13 70 / .2);color:oklch(0.88 0.1 70);border:1px solid oklch(0.80 0.13 70 / .35)">{{ top.fits }}</span>
+              <span style="font-size:11.5px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75)">{{ top.meta }}</span>
+              <sc-if value="{{ top.fromList }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:11.5px;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.85);white-space:nowrap">Из вашего списка</span>
+              </sc-if>
+            </div>
+            <div style="display:flex;gap:9px;align-items:flex-start">
+              <span style="width:3px;align-self:stretch;border-radius:2px;background:oklch(0.80 0.13 70);flex:none;margin-top:2px"></span>
+              <div style="font-size:14px;line-height:1.45;color:rgba(255,255,255,.9);text-wrap:pretty">{{ top.why }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:8px 22px 12px;display:flex;align-items:center;justify-content:center;gap:16px">
+        <button onClick="{{ swipeLeft }}" style="width:56px;height:56px;flex:none;border-radius:50%;cursor:pointer;background:rgba(244,239,228,.07);border:1px solid rgba(244,239,228,.16);color:rgba(244,239,228,.75);font-size:20px;font-family:'Golos Text',sans-serif" style-hover="background:rgba(244,239,228,.14)">✕</button>
+        <button onClick="{{ swipeRight }}" style="flex:1;height:56px;border-radius:28px;cursor:pointer;background:rgba(244,239,228,.09);border:1px solid rgba(244,239,228,.2);color:#f4efe4;font-family:'Golos Text',sans-serif;font-size:15px;font-weight:600" style-hover="background:rgba(244,239,228,.16)">Интересно</button>
+        <button onClick="{{ playNow }}" style="flex:1.15;height:56px;border-radius:28px;cursor:pointer;background:#f4efe4;border:none;color:#14120c;font-family:'Golos Text',sans-serif;font-size:15.5px;font-weight:700" style-hover="background:#fff">Смотреть</button>
+      </div>
+      <div style="padding:0 22px 20px;text-align:center">
+        <button onClick="{{ decideForMe }}" style="background:none;border:none;cursor:pointer;color:rgba(244,239,228,.35);font-family:'Golos Text',sans-serif;font-size:12.5px">Хватит, выбери за меня</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ФИНАЛ -->
+    <sc-if value="{{ isFinal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#100e08;animation:fadeIn .3s both">
+      <div style="position:absolute;left:0;right:0;top:0;height:520px;background:{{ pick.g }};background-image:url({{ pick.img }});background-size:cover;background-position:center"></div>
+      <div style="position:absolute;left:0;right:0;top:200px;height:340px;background:linear-gradient(to top,#100e08 62%,rgba(16,14,8,0))"></div>
+
+      <div style="position:relative;padding:56px 22px 0;display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <button onClick="{{ back }}" style="background:rgba(8,7,5,.45);backdrop-filter:blur(6px);border:none;cursor:pointer;color:rgba(255,255,255,.85);font-family:'Golos Text',sans-serif;font-size:13.5px;padding:8px 13px;border-radius:999px">← Назад</button>
+        <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.78);text-shadow:0 1px 8px rgba(0,0,0,.5)">
+          <span style="width:5px;height:5px;border-radius:50%;background:{{ finalDot }};display:block"></span>{{ finalTag }}
+        </div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="position:relative;padding:0 22px 26px">
+        <div style="font-family:'Unbounded',sans-serif;font-weight:600;font-size:38px;line-height:1;letter-spacing:-.02em;color:#f7f2e7;text-transform:uppercase;margin-bottom:14px;text-wrap:balance">{{ pick.title }}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          <span style="font-size:12px;padding:6px 11px;border-radius:999px;background:rgba(244,239,228,.1);color:rgba(244,239,228,.8)">{{ pick.dur }}</span>
+          <span style="font-size:12px;padding:6px 11px;border-radius:999px;background:oklch(0.80 0.13 70 / .18);color:oklch(0.88 0.1 70);border:1px solid oklch(0.80 0.13 70 / .3)">{{ pick.fits }}</span>
+          <span style="font-size:12px;padding:6px 11px;border-radius:999px;background:rgba(244,239,228,.08);color:rgba(244,239,228,.6)">{{ pick.meta }}</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:22px;padding:14px;border-radius:14px;background:rgba(244,239,228,.05);border:1px solid rgba(244,239,228,.1)">
+          <span style="width:3px;align-self:stretch;border-radius:2px;background:oklch(0.80 0.13 70);flex:none"></span>
+          <div style="font-size:13.5px;line-height:1.5;color:rgba(244,239,228,.82);text-wrap:pretty">{{ pick.why }}</div>
+        </div>
+        <button onClick="{{ play }}" style="width:100%;border:none;cursor:pointer;background:#f4efe4;color:#14120c;font-family:'Golos Text',sans-serif;font-size:17px;font-weight:700;padding:19px;border-radius:17px;margin-bottom:11px" style-hover="background:#fff">Смотреть</button>
+        <div style="display:flex;gap:10px">
+          <sc-if value="{{ fromMode }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ swap }}" style="flex:1;cursor:{{ swapCursor }};background:rgba(244,239,228,.07);border:1px solid rgba(244,239,228,.16);border-radius:14px;padding:14px;font-family:'Golos Text',sans-serif;font-size:13.5px;font-weight:500;color:{{ swapColor }}" style-hover="background:rgba(244,239,228,.12)">{{ swapLabel }}</button>
+          </sc-if>
+          <button onClick="{{ postpone }}" style="flex:1;cursor:pointer;background:none;border:1px solid rgba(244,239,228,.16);border-radius:14px;padding:14px;font-family:'Golos Text',sans-serif;font-size:13.5px;font-weight:500;color:rgba(244,239,228,.65)" style-hover="background:rgba(244,239,228,.06)">Отложить</button>
+        </div>
+        <div style="text-align:center;font-size:11.5px;color:rgba(244,239,228,.3);margin-top:16px">{{ finalNote }}</div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ПЛЕЕР -->
+    <sc-if value="{{ isPlayer }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:#07060a;display:flex;flex-direction:column;animation:fadeIn .3s both">
+      <div style="position:absolute;inset:0;background:{{ pick.g }};background-image:url({{ pick.img }});background-size:cover;background-position:center;opacity:.55"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(80% 50% at 50% 45%,rgba(0,0,0,.15),rgba(0,0,0,.72))"></div>
+
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+        <div style="font-family:'Unbounded',sans-serif;font-weight:400;font-size:13px;letter-spacing:.2em;color:rgba(255,255,255,.5)">ИДЁТ ПРОСМОТР</div>
+        <div style="font-family:'Unbounded',sans-serif;font-weight:600;font-size:26px;line-height:1.05;color:rgba(255,255,255,.94);text-transform:uppercase;text-align:center;padding:0 34px;text-wrap:balance">{{ pick.title }}</div>
+      </div>
+
+      <sc-if value="{{ showSafety }}" hint-placeholder-val="{{ true }}">
+        <div style="position:relative;padding:0 22px 18px;animation:riseIn .3s both">
+          <button onClick="{{ notIt }}" style="width:100%;cursor:pointer;background:rgba(12,10,8,.72);backdrop-filter:blur(10px);border:1px solid rgba(244,239,228,.24);border-radius:16px;padding:15px;font-family:'Golos Text',sans-serif;font-size:14.5px;font-weight:600;color:#f4efe4;display:flex;align-items:center;justify-content:center;gap:9px" style-hover="background:rgba(30,26,20,.85)">
+            <span>Не то, вернуться</span>
+            <span style="font-size:12px;font-weight:400;color:rgba(244,239,228,.5);font-variant-numeric:tabular-nums">{{ safetyLeft }}</span>
+          </button>
+          <div style="text-align:center;font-size:11px;color:rgba(244,239,228,.4);margin-top:9px">Не испортит «Продолжить смотреть» и подставит следующий вариант</div>
+        </div>
+      </sc-if>
+
+      <div style="position:relative;padding:0 22px 30px">
+        <div style="height:3px;border-radius:2px;background:rgba(255,255,255,.18);overflow:hidden;margin-bottom:9px">
+          <div style="height:100%;background:oklch(0.80 0.13 70);width:{{ progressW }}"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;color:rgba(255,255,255,.45);font-variant-numeric:tabular-nums">
+          <span>{{ playedLabel }}</span><span>{{ pick.dur }}</span>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ОТЛОЖЕНО -->
+    <sc-if value="{{ isSaved }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;padding:46px 22px 26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(110% 60% at 50% 20%,#241f14,#100e08 70%);text-align:center;animation:fadeIn .3s both">
+      <div style="font-family:'Unbounded',sans-serif;font-weight:400;font-size:24px;line-height:1.2;color:#f4efe4">Отложили в «Буду смотреть»</div>
+      <div style="font-size:13.5px;line-height:1.5;color:rgba(244,239,228,.45);max-width:280px;text-wrap:pretty">Мы отметили, что сегодня это не подошло. В следующий вечер предложим этот вариант, когда совпадёт время и настроение.</div>
+      <button onClick="{{ reset }}" style="margin-top:8px;cursor:pointer;background:rgba(244,239,228,.08);border:1px solid rgba(244,239,228,.18);border-radius:14px;padding:14px 22px;font-family:'Golos Text',sans-serif;font-size:14px;font-weight:500;color:#f4efe4" style-hover="background:rgba(244,239,228,.14)">Вернуться на главную</button>
+    </div>
+    </sc-if>
+
+  </div>
+
+  <sc-if value="{{ !standalone }}" hint-placeholder-val="{{ true }}">
+  <div style="width:230px;align-self:flex-start;padding-top:8px;display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,228,.35)">Состояние прототипа</div>
+    <div style="padding:14px;border-radius:14px;background:rgba(244,239,228,.04);border:1px solid rgba(244,239,228,.1);display:flex;flex-direction:column;gap:10px;font-size:12px;color:rgba(244,239,228,.6)">
+      <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Экран</span><span style="color:#f4efe4;text-align:right">{{ dbgScreen }}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Контекст</span><span style="color:#f4efe4;text-align:right">{{ dbgCtx }}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Карточек просмотрено</span><span style="color:#f4efe4">{{ dbgSeen }}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Замен использовано</span><span style="color:#f4efe4">{{ dbgSwaps }}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:rgba(244,239,228,.35)">Время в режиме</span><span style="color:#f4efe4;font-variant-numeric:tabular-nums">{{ elapsedChoice }}</span></div>
+    </div>
+    <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,228,.35);margin-top:6px">События воронки</div>
+    <div style="padding:12px 14px;border-radius:14px;background:rgba(244,239,228,.04);border:1px solid rgba(244,239,228,.1);display:flex;flex-direction:column;gap:7px;max-height:300px;overflow-y:auto">
+      <sc-for list="{{ log }}" as="e" hint-placeholder-count="3">
+        <div style="display:flex;gap:8px;font-size:11px;line-height:1.35">
+          <span style="color:rgba(244,239,228,.3);font-variant-numeric:tabular-nums;flex:none">{{ e.t }}</span>
+          <span style="color:rgba(244,239,228,.62);font-family:ui-monospace,Menlo,monospace;font-size:10.5px">{{ e.name }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ logEmpty }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:11px;color:rgba(244,239,228,.25);line-height:1.4">Пока пусто. Пролистайте главную вниз — появится вечерний триггер.</div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1000,&quot;height&quot;:940},&quot;deckSize&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:7,&quot;min&quot;:3,&quot;max&quot;:9,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Механика режима&quot;},&quot;showCounter&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Механика режима&quot;}}">
+const FILMS = [
+  {id:'f1', title:'Тихий сигнал', meta:'Драма · 2021', min:96, age:16, mood:['think','calm'], still:'stills/f1-real.png', g:'linear-gradient(150deg,#3d5a5c,#1b2b2f 60%,#0f1618)'},
+  {id:'f2', title:'Сорок восемь часов лета', meta:'Комедия · 2023', min:88, age:12, mood:['laugh'], still:'stills/f2-real.png', g:'linear-gradient(150deg,#a9733a,#5c3a1c 58%,#221408)'},
+  {id:'f3', title:'Северная станция', meta:'Триллер · 2019', min:124, age:18, mood:['thrill'], still:'stills/f3-real.png', g:'linear-gradient(150deg,#2f3b63,#181d33 60%,#0b0d18)'},
+  {id:'f4', title:'Кто держит небо', meta:'Фантастика · 2022', min:139, age:12, mood:['thrill','think'], still:'stills/f4-real.png', g:'linear-gradient(150deg,#4c3a6b,#241a3a 60%,#100a1c)'},
+  {id:'f5', title:'Полдень в Сочи', meta:'Мелодрама · 2020', min:104, age:16, mood:['calm','laugh'], still:'stills/f5-real.png', g:'linear-gradient(150deg,#b4574f,#6a2b2c 58%,#2a0f12)'},
+  {id:'f6', title:'Бумажный лес', meta:'Анимация · 2024', min:78, age:6, mood:['calm','laugh'], still:'stills/f6-real.png', g:'linear-gradient(150deg,#5b8f5a,#2c4a2e 60%,#121e14)'},
+  {id:'f7', title:'Долгий разговор', meta:'Драма · 2018', min:112, age:16, mood:['think'], still:'stills/f7-real.png', g:'linear-gradient(150deg,#7b6a4a,#40361f 60%,#1b160b)'},
+  {id:'f8', title:'Ключи от вторника', meta:'Драма · 2022', min:42, age:12, mood:['think','calm'], still:'stills/f8-real.png', g:'linear-gradient(150deg,#c08a2e,#754d13 58%,#2c1c05)'},
+  {id:'f9', title:'Станция Восход', meta:'Фантастика · 2023', min:38, age:6, mood:['think','thrill'], still:'stills/f9-real.png', g:'linear-gradient(150deg,#3f7f8c,#1e4450 60%,#0b1c22)'},
+  {id:'f10', title:'Молчание камня', meta:'Детектив · 2021', min:118, age:18, mood:['thrill','think'], still:'stills/f10-real.png', g:'linear-gradient(150deg,#4a4a52,#242429 60%,#0f0f12)'},
+  {id:'f11', title:'Земляника зимой', meta:'Драма · 2024', min:97, age:16, mood:['calm','think'], still:'stills/f11-real.png', g:'linear-gradient(150deg,#8f5b7a,#4d2b41 60%,#1e0f1a)'},
+  {id:'f12', title:'Второй завтрак', meta:'Семейное · 2023', min:64, age:0, mood:['laugh','calm'], still:'stills/f12-real.png', g:'linear-gradient(150deg,#a3a24f,#5c5b23 60%,#25240b)'},
+  {id:'f13', title:'Тёплый ноль', meta:'Комедия · 2022', min:92, age:12, mood:['laugh'], still:'stills/f13-real.png', g:'linear-gradient(150deg,#c98a4a,#6b4520 60%,#2a1808)'},
+  {id:'f14', title:'Соседи по вторнику', meta:'Мелодрама · 2021', min:98, age:16, mood:['calm','laugh'], still:'stills/f14-real.png', g:'linear-gradient(150deg,#a8607a,#552c3b 60%,#210e17)'},
+  {id:'f15', title:'Ветер в антенне', meta:'Фантастика · 2020', min:87, age:12, mood:['think','thrill'], still:'stills/f15-real.png', g:'linear-gradient(150deg,#4d6f95,#25384c 60%,#0d151f)'},
+  {id:'f16', title:'Кто первый уснёт', meta:'Анимация · 2024', min:71, age:0, mood:['calm','laugh'], still:'stills/f16-real.png', g:'linear-gradient(150deg,#6a9e7a,#33503c 60%,#131f17)'},
+  {id:'f17', title:'Ночная смена', meta:'Триллер · 2022', min:99, age:18, mood:['thrill'], still:'stills/f17-real.png', g:'linear-gradient(150deg,#565a6b,#2a2c36 60%,#111216)'},
+  {id:'f18', title:'Летний лагерь №9', meta:'Приключения · 2019', min:84, age:6, mood:['laugh','thrill'], still:'stills/f18-real.png', g:'linear-gradient(150deg,#b2a04a,#585021 60%,#22200b)'},
+  {id:'f19', title:'Три письма', meta:'Драма · 2023', min:94, age:16, mood:['think','calm'], still:'stills/f19-real.png', g:'linear-gradient(150deg,#8a7f6a,#453f34 60%,#1b1913)'}
+];
+const LIST_IDS = ['f7','f11','f3','f5','f19','f14'];
+
+const QUESTIONS = [
+  {key:'time', step:'Вопрос 1 из 3', title:'Сколько у вас времени?', sub:'Покажем только то, что поместится в этот вечер.',
+   opts:[{v:45,icon:'45′',label:'Меньше часа',hint:'Короткий метр и серии'},{v:100,icon:'1½',label:'Полтора часа',hint:'Обычный вечерний фильм'},{v:200,icon:'∞',label:'Время есть',hint:'Готов к длинному кино'}]},
+  {key:'company', step:'Вопрос 2 из 3', title:'С кем смотрите?', sub:'От состава зависит рейтинг и темп.',
+   opts:[{v:'solo',icon:'1',label:'Один',hint:'Можно что угодно'},{v:'duo',icon:'2',label:'Вдвоём',hint:'Ищем общий знаменатель'},{v:'kids',icon:'0+',label:'С детьми',hint:'Только 0+ и 6+'}]},
+  {key:'mood', step:'Вопрос 3 из 3', title:'Чего хочется?', sub:'Последний вопрос — дальше только карточки.',
+   opts:[{v:'laugh',icon:'☺',label:'Посмеяться',hint:'Легко и без нагрузки'},{v:'thrill',icon:'!',label:'Напряжения',hint:'Чтобы не отпускало'},{v:'calm',icon:'~',label:'Спокойного',hint:'Тихое и тёплое'},{v:'think',icon:'?',label:'Подумать',hint:'С двойным дном'}]}
+];
+
+const MOOD_LABEL = {laugh:'посмеяться', thrill:'напряжение', calm:'спокойное', think:'подумать'};
+const TIME_LABEL = {45:'до 45 минут', 100:'полтора часа', 200:'время есть'};
+const COMPANY_LABEL = {solo:'один', duo:'вдвоём', kids:'с детьми'};
+
+class Component extends DCLogic {
+  constructor(p){
+    super(p);
+    let last = null;
+    try { last = JSON.parse(localStorage.getItem('kadr-vecher-last') || 'null'); } catch(e){}
+    let standalone = false;
+    try { standalone = new URLSearchParams(window.location.search).get('phone') === '1'; } catch(e){}
+    this.state = {
+      screen:'home', scrolled:false, qi:0, ctx:{}, last, standalone,
+      deck:[], di:0, liked:[], seen:0, pick:null, swaps:0,
+      played:0, safety:300, t0:null, tick:0, log:[], fallback:'', pickSource:'mode'
+    };
+    this.cardRef = React.createRef();
+    this.likeRef = React.createRef();
+    this.nopeRef = React.createRef();
+    this.drag = null;
+  }
+
+  componentDidMount(){
+    this.timer = setInterval(() => {
+      this.setState(s => {
+        const n = {tick: s.tick + 1};
+        if (s.screen === 'player') { n.played = s.played + 1; n.safety = Math.max(0, s.safety - 1); }
+        return n;
+      });
+    }, 1000);
+  }
+  componentWillUnmount(){ clearInterval(this.timer); }
+
+  ev(name){
+    const d = new Date();
+    const t = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' + String(d.getSeconds()).padStart(2,'0');
+    this.setState(s => ({log: [{t, name}].concat(s.log).slice(0, 40)}));
+  }
+
+  // ——— подбор колоды
+  build(ctx){
+    const size = Math.max(3, Math.min(9, this.props.deckSize ?? 7));
+    const maxMin = ctx.time ?? 200;
+    const kids = ctx.company === 'kids';
+    const fits = f => f.min <= maxMin && (!kids || f.age <= 6);
+    let strict = FILMS.filter(f => fits(f) && (!ctx.mood || f.mood.includes(ctx.mood)));
+    let fallback = '';
+    let pool = strict;
+    if (pool.length < size) {
+      const relaxed = FILMS.filter(f => fits(f) && pool.indexOf(f) < 0);
+      if (relaxed.length) fallback = 'Под ваши условия подошло немного — ослабили фильтр по настроению, но время и состав зрителей сохранили.';
+      pool = pool.concat(relaxed);
+    }
+    if (pool.length < size) {
+      const wide = FILMS.filter(f => pool.indexOf(f) < 0 && (!kids || f.age <= 6));
+      if (wide.length) fallback = 'Совсем точных совпадений мало. Расширили поиск по хронометражу — честно предупреждаем.';
+      pool = pool.concat(wide);
+    }
+    // две карточки из «Буду смотреть» и длинного хвоста — по приоритету
+    const fromList = pool.filter(f => LIST_IDS.indexOf(f.id) >= 0).slice(0, 2);
+    const rest = pool.filter(f => fromList.indexOf(f) < 0);
+    const deck = fromList.concat(rest).slice(0, size).map(f => Object.assign({}, f, {fromList: LIST_IDS.indexOf(f.id) >= 0}));
+    // перемешиваем так, чтобы карточка из списка не была первой всегда
+    if (deck.length > 2) { const a = deck.splice(1, 1)[0]; deck.splice(2, 0, a); }
+    return {deck, fallback};
+  }
+
+  dur(min){ const h = Math.floor(min/60), m = min%60; return h ? (h + ' ч ' + (m ? m + ' мин' : '') ).trim() : m + ' мин'; }
+  fitsLabel(min){
+    const end = new Date(); end.setHours(20, 45, 0, 0);
+    end.setMinutes(end.getMinutes() + min + 10);
+    const hh = String(end.getHours()).padStart(2,'0'), mm = String(end.getMinutes()).padStart(2,'0');
+    return 'успеете до ' + hh + ':' + mm;
+  }
+  why(f){
+    const c = this.state.ctx;
+    if (f.fromList) return 'Лежит в «Буду смотреть» с марта — и впервые подходит под ваш вечер по времени.';
+    if (c.company === 'kids') return 'Рейтинг ' + f.age + '+ и короткие эпизоды: успеете закончить до сна.';
+    if (c.mood && f.mood.indexOf(c.mood) >= 0) return 'Совпало с тем, чего хочется сегодня: ' + MOOD_LABEL[c.mood] + '. Плюс помещается в ваше время.';
+    return 'Близко к тому, что вы досматривали до конца, и укладывается в ' + TIME_LABEL[c.time ?? 200] + '.';
+  }
+  card(f){
+    if (!f) return null;
+    return Object.assign({}, f, {dur: this.dur(f.min), fits: this.fitsLabel(f.min), why: this.why(f), img: (f.still || 'stills/' + f.id + '.png')});
+  }
+
+  // ——— переходы
+  go(screen){ this.setState({screen}); }
+  reset = () => {
+    this.setState({screen:'home', scrolled:false, qi:0, ctx:{}, deck:[], di:0, liked:[], seen:0, pick:null, swaps:0, played:0, safety:300, t0:null, fallback:'', pickSource:'mode'});
+    this.ev('reset_prototype');
+  };
+  openStandalone = () => {
+    const url = window.location.pathname + '?phone=1';
+    window.open(url, '_blank', 'width=390,height=844,noopener');
+    this.ev('opened_standalone_window');
+  };
+  onHomeScroll = (e) => {
+    if (!this.state.scrolled && e.target.scrollTop > 180) { this.setState({scrolled:true}); this.ev('evening_trigger_shown'); }
+  };
+  startFlow = () => { this.setState({screen:'q', qi:0, ctx:{}, t0:Date.now()}); this.ev('mode_entered'); };
+  openFilm(f){
+    this.ev('catalog_card_opened:' + f.id);
+    this.setState({pick: f, pickSource: 'catalog', screen: 'final', swaps: 0});
+  }
+  back = () => {
+    const s = this.state;
+    if (s.screen === 'final') { this.setState({screen: s.pickSource === 'catalog' ? 'home' : 'deck'}); return; }
+    if (s.screen === 'deck') { this.setState({screen:'q', qi:2}); return; }
+    if (s.qi > 0) { this.setState({qi: s.qi - 1}); return; }
+    this.setState({screen:'home'});
+  };
+  answer(key, v){
+    const ctx = Object.assign({}, this.state.ctx, {[key]: v});
+    this.ev('context_answered:' + key);
+    if (this.state.qi < 2) { this.setState({ctx, qi: this.state.qi + 1}); return; }
+    this.finishCtx(ctx);
+  }
+  finishCtx(ctx){
+    try { localStorage.setItem('kadr-vecher-last', JSON.stringify(ctx)); } catch(e){}
+    const {deck, fallback} = this.build(ctx);
+    this.setState({ctx, deck, di:0, liked:[], seen:0, fallback, screen:'deck', last:ctx});
+    this.ev('deck_built:' + deck.length);
+    if (fallback) this.ev('fallback_relaxed');
+  }
+  skipQ = () => {
+    const s = this.state, q = QUESTIONS[s.qi];
+    const guess = q.key === 'time' ? 100 : q.key === 'company' ? 'solo' : null;
+    const ctx = Object.assign({}, s.ctx); if (guess !== null) ctx[q.key] = guess;
+    this.ev('question_skipped:' + q.key);
+    if (s.qi < 2) this.setState({ctx, qi: s.qi + 1}); else this.finishCtx(ctx);
+  };
+  useLast = () => { this.ev('context_reused'); this.finishCtx(this.state.last || {time:100, company:'solo', mood:'calm'}); };
+
+  // ——— свайпы
+  onDown = (e) => {
+    const el = this.cardRef.current; if (!el) return;
+    el.setPointerCapture && el.setPointerCapture(e.pointerId);
+    this.drag = {x:e.clientX, y:e.clientY, dx:0};
+    el.style.transition = 'none'; el.style.cursor = 'grabbing';
+  };
+  onMove = (e) => {
+    if (!this.drag) return;
+    const el = this.cardRef.current; if (!el) return;
+    const dx = e.clientX - this.drag.x, dy = e.clientY - this.drag.y;
+    this.drag.dx = dx;
+    el.style.transform = 'translate(' + dx + 'px,' + dy * 0.35 + 'px) rotate(' + dx / 17 + 'deg)';
+    const k = Math.min(1, Math.abs(dx) / 90);
+    if (this.likeRef.current) this.likeRef.current.style.opacity = dx > 0 ? k : 0;
+    if (this.nopeRef.current) this.nopeRef.current.style.opacity = dx < 0 ? k : 0;
+  };
+  onUp = () => {
+    if (!this.drag) return;
+    const dx = this.drag.dx; this.drag = null;
+    const el = this.cardRef.current; if (!el) return;
+    el.style.cursor = 'grab';
+    if (Math.abs(dx) > 88) this.fly(dx > 0 ? 1 : -1); else this.springBack();
+  };
+  springBack(){
+    const el = this.cardRef.current; if (!el) return;
+    el.style.transition = 'transform .38s cubic-bezier(.2,1.3,.4,1)';
+    el.style.transform = 'none';
+    [this.likeRef, this.nopeRef].forEach(r => { if (r.current) { r.current.style.transition = 'opacity .2s'; r.current.style.opacity = 0; } });
+  }
+  fly(dir){
+    const el = this.cardRef.current;
+    if (el) {
+      el.style.transition = 'transform .3s ease-out, opacity .3s ease-out';
+      el.style.transform = 'translate(' + dir * 520 + 'px,60px) rotate(' + dir * 24 + 'deg)';
+      el.style.opacity = '0';
+    }
+    setTimeout(() => this.commit(dir), 250);
+  }
+  clearCard(){
+    const el = this.cardRef.current;
+    if (el) { el.style.transition = 'none'; el.style.transform = 'none'; el.style.opacity = '1'; }
+    [this.likeRef, this.nopeRef].forEach(r => { if (r.current) r.current.style.opacity = 0; });
+  }
+  commit(dir){
+    const s = this.state, f = s.deck[s.di];
+    if (!f) return;
+    this.ev((dir > 0 ? 'card_liked:' : 'card_passed:') + f.id);
+    const liked = dir > 0 ? s.liked.concat([f]) : s.liked;
+    const di = s.di + 1, seen = s.seen + 1;
+    this.clearCard();
+    if (liked.length >= 2 || di >= s.deck.length) {
+      const pick = liked[0] || s.deck[0];
+      this.setState({liked, di, seen, pick, screen:'final', pickSource:'mode'});
+      this.ev('final_shown:' + pick.id);
+    } else {
+      this.setState({liked, di, seen});
+    }
+  }
+  playNow = () => {
+    const s = this.state, f = s.deck[s.di];
+    if (!f) return;
+    this.ev('play_from_deck:' + f.id);
+    this.setState({pick: f, screen:'player', played:0, safety:300});
+  };
+  swipeLeft = () => { this.fly(-1); };
+  swipeRight = () => { this.fly(1); };
+  decideForMe = () => {
+    const s = this.state, pick = s.liked[0] || s.deck[s.di] || s.deck[0];
+    this.setState({pick, screen:'final', pickSource:'mode'});
+    this.ev('auto_pick:' + (pick ? pick.id : '—'));
+  };
+
+  swap = () => {
+    const s = this.state;
+    if (s.swaps >= 2) { this.ev('swap_denied'); return; }
+    const used = {}; if (s.pick) used[s.pick.id] = 1; s.liked.forEach(f => used[f.id] = 1);
+    const next = s.deck.filter(f => !used[f.id])[0] || s.deck.find(f => !s.pick || f.id !== s.pick.id);
+    if (!next) return;
+    this.setState({pick: next, swaps: s.swaps + 1, liked: s.liked.concat([next])});
+    this.ev('variant_swapped:' + next.id);
+  };
+  postpone = () => { this.setState({screen:'saved'}); this.ev('postponed'); };
+  play = () => { this.setState({screen:'player', played:0, safety:300}); this.ev('play_started:' + (this.state.pick ? this.state.pick.id : '')); };
+  notIt = () => {
+    const s = this.state;
+    this.ev('early_exit_used');
+    const used = {}; if (s.pick) used[s.pick.id] = 1;
+    const rest = s.deck.filter(f => !used[f.id]);
+    if (rest.length) { this.setState({pick: rest[0], screen:'final', pickSource:'mode', played:0, safety:300}); this.ev('replacement_offered:' + rest[0].id); }
+    else this.setState({screen:'deck', di:0, played:0, safety:300});
+  };
+
+  mmss(n){ return Math.floor(n/60) + ':' + String(n%60).padStart(2,'0'); }
+
+  renderVals(){
+    const s = this.state, S = s.screen;
+    const q = QUESTIONS[s.qi];
+    const top = this.card(s.deck[s.di]);
+    const pick = this.card(s.pick) || {title:'', dur:'', fits:'', meta:'', why:'', g:'#222', img:''};
+    const rows = [
+      {title:'Продолжить смотреть', note:'', items:[FILMS[2], FILMS[6], FILMS[9], FILMS[4]]},
+      {title:'Буду смотреть', note:'41 позиция', items:[FILMS[6], FILMS[10], FILMS[2], FILMS[4], FILMS[18], FILMS[13]]},
+      {title:'Новинки недели', note:'', items:[FILMS[11], FILMS[13], FILMS[18], FILMS[1], FILMS[15]]}
+    ].map(r => Object.assign({}, r, {items: r.items.map(f => Object.assign({}, f, {short: this.dur(f.min) + ' · ' + f.meta.split(' · ')[0], img: (f.still || 'stills/' + f.id + '.png'), open: () => this.openFilm(f)}))}));
+
+    const el = s.t0 ? Math.round((Date.now() - s.t0) / 1000) : 0;
+
+    return {
+      clock: '20:45',
+      standalone: s.standalone,
+      outerExtra: s.standalone ? 'padding:0;gap:0' : '',
+      phoneExtra: s.standalone ? 'width:100vw;height:100vh;max-width:100vw;max-height:100vh;border-radius:0;box-shadow:none' : '',
+      openStandalone: this.openStandalone,
+      isHome: S === 'home', isQ: S === 'q', isDeck: S === 'deck', isFinal: S === 'final', isPlayer: S === 'player', isSaved: S === 'saved',
+      showTrigger: s.scrolled,
+      triggerNote: 'Вечер, 20:45 — два экрана без запуска',
+      homeRows: rows,
+      startFlow: this.startFlow, back: this.back, skipQ: this.skipQ, useLast: this.useLast, reset: this.reset,
+      onHomeScroll: this.onHomeScroll,
+      heroOpen: () => { this.setState({pick: FILMS[3], pickSource:'catalog'}); this.ev('hero_play:f4'); this.setState({screen:'player', played:0, safety:300}); },
+
+      qStep: q.step, qTitle: q.title, qSub: q.sub,
+      qBars: QUESTIONS.map((_, i) => ({c: i <= s.qi ? 'oklch(0.80 0.13 70)' : 'rgba(244,239,228,.14)'})),
+      qOptions: q.opts.map(o => ({
+        icon:o.icon, label:o.label, hint:o.hint,
+        bg: s.ctx[q.key] === o.v ? 'oklch(0.80 0.13 70 / .12)' : 'rgba(244,239,228,.05)',
+        bd: s.ctx[q.key] === o.v ? 'oklch(0.80 0.13 70 / .5)' : 'rgba(244,239,228,.12)',
+        pick: () => this.answer(q.key, o.v)
+      })),
+      hasLast: !!s.last && s.qi === 0,
+      lastSummary: s.last ? [TIME_LABEL[s.last.time], COMPANY_LABEL[s.last.company], MOOD_LABEL[s.last.mood]].filter(Boolean).join(', ') : '',
+
+      top: top || {title:'', g:'#1a1a1a', dur:'', fits:'', meta:'', why:'', fromList:false, img:''},
+      next: this.card(s.deck[s.di + 1]) || {g:'#1a1a1a', img:''},
+      third: this.card(s.deck[s.di + 2]) || {g:'#1a1a1a', img:''},
+      hasNext: !!s.deck[s.di + 1], hasThird: !!s.deck[s.di + 2],
+      cardRef: this.cardRef, likeRef: this.likeRef, nopeRef: this.nopeRef,
+      onDown: this.onDown, onMove: this.onMove, onUp: this.onUp,
+      swipeLeft: this.swipeLeft, swipeRight: this.swipeRight, decideForMe: this.decideForMe, playNow: this.playNow,
+      deckCounter: (this.props.showCounter ?? true) ? 'осталось ' + Math.max(0, s.deck.length - s.di) + ' из ' + s.deck.length : '',
+      chips: [TIME_LABEL[s.ctx.time] || 'время не важно', COMPANY_LABEL[s.ctx.company] || 'один', s.ctx.mood ? MOOD_LABEL[s.ctx.mood] : 'настроение любое'],
+      showFallback: !!s.fallback, fallbackText: s.fallback,
+
+      pick,
+      play: this.play, swap: this.swap, postpone: this.postpone, notIt: this.notIt,
+      swapLabel: s.swaps >= 2 ? 'Замен больше нет' : 'Другой вариант · ' + (2 - s.swaps),
+      swapColor: s.swaps >= 2 ? 'rgba(244,239,228,.28)' : '#f4efe4',
+      swapCursor: s.swaps >= 2 ? 'not-allowed' : 'pointer',
+      elapsedChoice: this.mmss(el),
+      fromMode: s.pickSource !== 'catalog',
+      finalTag: s.pickSource === 'catalog' ? 'Из каталога' : 'Ваш вечер собран',
+      finalDot: s.pickSource === 'catalog' ? 'rgba(255,255,255,.5)' : 'oklch(0.82 0.16 145)',
+      finalNote: s.pickSource === 'catalog' ? 'Обычная карточка каталога — здесь выбор делаете вы' : 'Выбор занял ' + this.mmss(el) + ' · передумать можно первые 5 минут',
+
+      showSafety: s.safety > 0,
+      safetyLeft: this.mmss(s.safety),
+      played: s.played, playedLabel: this.mmss(s.played),
+      progressW: (s.pick ? Math.min(100, s.played / (s.pick.min * 60) * 100 * 40) : 0) + '%',
+
+      dbgScreen: {home:'Главная', q:'Контекст', deck:'Колода', final:'Финал', player:'Плеер', saved:'Отложено'}[S],
+      dbgCtx: [TIME_LABEL[s.ctx.time], COMPANY_LABEL[s.ctx.company], MOOD_LABEL[s.ctx.mood]].filter(Boolean).join(' · ') || '—',
+      dbgSeen: s.seen, dbgSwaps: s.swaps,
+      log: s.log, logEmpty: s.log.length === 0
+    };
+  }
+}
+
+</script>
+</body>
+</html>
