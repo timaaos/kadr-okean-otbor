@@ -185,7 +185,8 @@ a:hover{color:oklch(0.88 0.10 70)}
           </div>
 
           <div ref="{{ likeRef }}" style="position:absolute;top:96px;left:22px;opacity:0;transform:rotate(-9deg);padding:7px 14px;border:2.5px solid oklch(0.82 0.16 145);border-radius:10px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:17px;color:oklch(0.86 0.16 145);letter-spacing:.04em">СМОТРЕТЬ</div>
-          <div ref="{{ nopeRef }}" style="position:absolute;top:96px;right:22px;opacity:0;transform:rotate(9deg);padding:7px 14px;border:2.5px solid oklch(0.70 0.17 25);border-radius:10px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:17px;color:oklch(0.76 0.17 25);letter-spacing:.04em">МИМО</div>
+          <div ref="{{ nopeRef }}" style="position:absolute;top:96px;right:22px;opacity:0;transform:rotate(9deg);padding:7px 14px;border:2.5px solid oklch(0.70 0.17 25);border-radius:10px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:17px;color:oklch(0.76 0.17 25);letter-spacing:.04em">ДАЛЬШЕ</div>
+          <button onPointerDown="{{ stopDrag }}" onClick="{{ saveForLater }}" style="position:absolute;top:50%;right:16px;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;cursor:pointer;background:rgba(8,7,5,.42);backdrop-filter:blur(6px);border:1px solid rgba(244,239,228,.3);color:#f4efe4;font-size:18px;line-height:1;font-family:'Golos Text',sans-serif" style-hover="background:rgba(8,7,5,.62)" title="Отложить">+</button>
 
           <div style="position:absolute;left:0;right:0;bottom:0;padding:22px;background:linear-gradient(to top,rgba(8,7,5,.94) 8%,rgba(8,7,5,.55) 55%,transparent)">
             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
@@ -204,9 +205,11 @@ a:hover{color:oklch(0.88 0.10 70)}
         </div>
       </div>
 
-      <div style="padding:8px 22px 12px;display:flex;align-items:center;justify-content:center;gap:16px">
-        <button onClick="{{ swipeLeft }}" style="width:56px;height:56px;flex:none;border-radius:50%;cursor:pointer;background:rgba(244,239,228,.07);border:1px solid rgba(244,239,228,.16);color:rgba(244,239,228,.75);font-size:20px;font-family:'Golos Text',sans-serif" style-hover="background:rgba(244,239,228,.14)">✕</button>
-        <button onClick="{{ saveForLater }}" style="flex:1;height:56px;border-radius:28px;cursor:pointer;background:rgba(244,239,228,.09);border:1px solid rgba(244,239,228,.2);color:#f4efe4;font-family:'Golos Text',sans-serif;font-size:15px;font-weight:600" style-hover="background:rgba(244,239,228,.16)">Отложить</button>
+      <sc-if value="{{ showSwipeHint }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:0 22px 6px;text-align:center;font-size:11.5px;color:rgba(244,239,228,.35)">Тяните вправо, чтобы включить</div>
+      </sc-if>
+      <div style="padding:8px 22px 12px;display:flex;align-items:center;justify-content:center;gap:12px">
+        <button onClick="{{ swipeLeft }}" style="flex:.85;height:56px;border-radius:28px;cursor:pointer;background:rgba(244,239,228,.06);border:1px solid rgba(244,239,228,.14);color:rgba(244,239,228,.65);font-family:'Golos Text',sans-serif;font-size:14.5px;font-weight:500" style-hover="background:rgba(244,239,228,.11)">Дальше</button>
         <button onClick="{{ playNow }}" style="flex:1.15;height:56px;border-radius:28px;cursor:pointer;background:#f4efe4;border:none;color:#14120c;font-family:'Golos Text',sans-serif;font-size:15.5px;font-weight:700" style-hover="background:#fff">Смотреть</button>
       </div>
       <div style="padding:0 22px 20px;text-align:center">
@@ -368,6 +371,9 @@ const QUESTIONS = [
 const MOOD_LABEL = {laugh:'посмеяться', thrill:'напряжение', calm:'спокойное', think:'подумать'};
 const TIME_LABEL = {45:'до 45 минут', 100:'полтора часа', 200:'время есть'};
 const COMPANY_LABEL = {solo:'один', duo:'вдвоём', kids:'с детьми'};
+const LEFT_T = 90;   // «дальше» — дёшево, лёгкий флик
+const RIGHT_T = 150; // «смотреть» — дорого, нужен более решительный жест
+const REVEAL_T = 40; // штамп читается задолго до порога срабатывания
 
 class Component extends DCLogic {
   constructor(p){
@@ -376,8 +382,10 @@ class Component extends DCLogic {
     try { last = JSON.parse(localStorage.getItem('kadr-vecher-last') || 'null'); } catch(e){}
     let standalone = false;
     try { standalone = new URLSearchParams(window.location.search).get('phone') === '1'; } catch(e){}
+    let hasSwiped = false;
+    try { hasSwiped = localStorage.getItem('kadr-swipe-used') === '1'; } catch(e){}
     this.state = {
-      screen:'home', scrolled:false, qi:0, ctx:{}, last, standalone,
+      screen:'home', scrolled:false, qi:0, ctx:{}, last, standalone, hasSwiped,
       deck:[], di:0, seen:0, pick:null, savedIds:[], origin:'deck', singleChange:false,
       played:0, safety:300, t0:null, tick:0, log:[], fallback:''
     };
@@ -385,6 +393,7 @@ class Component extends DCLogic {
     this.likeRef = React.createRef();
     this.nopeRef = React.createRef();
     this.drag = null;
+    this._firstActionLogged = false;
   }
 
   componentDidMount(){
@@ -454,6 +463,7 @@ class Component extends DCLogic {
   // ——— переходы
   go(screen){ this.setState({screen}); }
   reset = () => {
+    this._firstActionLogged = false;
     this.setState({screen:'home', scrolled:false, qi:0, ctx:{}, deck:[], di:0, seen:0, pick:null, savedIds:[], origin:'deck', singleChange:false, played:0, safety:300, t0:null, fallback:''});
     this.ev('reset_prototype');
   };
@@ -491,6 +501,18 @@ class Component extends DCLogic {
     this.setState({ctx, deck, di:0, seen:0, fallback, screen:'deck', last:ctx, origin:'deck', singleChange:false});
     this.ev('deck_built:' + deck.length);
     if (fallback) this.ev('fallback_relaxed');
+    if (!this.state.hasSwiped) setTimeout(() => this.nudgeHint(), 500);
+  }
+  nudgeHint(){
+    if (this.state.hasSwiped || this.state.screen !== 'deck') return;
+    const el = this.cardRef.current; if (!el) return;
+    el.style.transition = 'transform .5s cubic-bezier(.2,.8,.2,1)';
+    el.style.transform = 'translate(26px,0) rotate(2deg)';
+    if (this.likeRef.current) { this.likeRef.current.style.transition = 'opacity .3s'; this.likeRef.current.style.opacity = .55; }
+    setTimeout(() => {
+      if (this.cardRef.current) this.cardRef.current.style.transform = 'none';
+      if (this.likeRef.current) this.likeRef.current.style.opacity = 0;
+    }, 320);
   }
   changeCondition = (key) => {
     this.ev('change_condition:' + key);
@@ -507,10 +529,11 @@ class Component extends DCLogic {
   useLast = () => { this.ev('context_reused'); this.finishCtx(this.state.last || {time:100, company:'solo', mood:'calm'}); };
 
   // ——— свайпы
+  stopDrag = (e) => { e.stopPropagation(); };
   onDown = (e) => {
     const el = this.cardRef.current; if (!el) return;
     el.setPointerCapture && el.setPointerCapture(e.pointerId);
-    this.drag = {x:e.clientX, y:e.clientY, dx:0};
+    this.drag = {x:e.clientX, y:e.clientY, dx:0, crossed:0};
     el.style.transition = 'none'; el.style.cursor = 'grabbing';
   };
   onMove = (e) => {
@@ -519,36 +542,63 @@ class Component extends DCLogic {
     const dx = e.clientX - this.drag.x, dy = e.clientY - this.drag.y;
     this.drag.dx = dx;
     el.style.transform = 'translate(' + dx + 'px,' + dy * 0.35 + 'px) rotate(' + dx / 17 + 'deg)';
-    const k = Math.min(1, Math.abs(dx) / 90);
-    if (this.likeRef.current) this.likeRef.current.style.opacity = dx > 0 ? k : 0;
-    if (this.nopeRef.current) this.nopeRef.current.style.opacity = dx < 0 ? k : 0;
+    // штамп читается почти сразу — задолго до порога, за который отвечает REVEAL_T
+    const reveal = v => Math.min(1, Math.max(0, v / REVEAL_T));
+    if (this.likeRef.current) this.likeRef.current.style.opacity = dx > 0 ? reveal(dx) : 0;
+    if (this.nopeRef.current) this.nopeRef.current.style.opacity = dx < 0 ? reveal(-dx) : 0;
+    // асимметричные пороги: «дальше» дёшево, «смотреть» дороже и требует более решительного жеста
+    const t = dx > 0 ? RIGHT_T : LEFT_T;
+    const crossedNow = Math.abs(dx) > t ? (dx > 0 ? 1 : -1) : 0;
+    if (crossedNow !== this.drag.crossed) {
+      const label = dx > 0 ? this.likeRef.current : this.nopeRef.current;
+      const base = dx > 0 ? 'rotate(-9deg)' : 'rotate(9deg)';
+      if (crossedNow && label) {
+        label.style.transition = 'transform .15s ease-out';
+        label.style.transform = base + ' scale(1.18)';
+        setTimeout(() => { if (label) label.style.transform = base; }, 150);
+        if (navigator.vibrate) navigator.vibrate(10);
+      }
+      this.drag.crossed = crossedNow;
+    }
   };
   onUp = () => {
     if (!this.drag) return;
     const dx = this.drag.dx; this.drag = null;
     const el = this.cardRef.current; if (!el) return;
     el.style.cursor = 'grab';
-    if (Math.abs(dx) > 88) this.fly(dx > 0 ? 1 : -1); else this.springBack();
+    const t = dx > 0 ? RIGHT_T : LEFT_T;
+    if (Math.abs(dx) > t) this.fly(dx > 0 ? 1 : -1, true); else this.springBack();
   };
   springBack(){
     const el = this.cardRef.current; if (!el) return;
     el.style.transition = 'transform .38s cubic-bezier(.2,1.3,.4,1)';
     el.style.transform = 'none';
-    [this.likeRef, this.nopeRef].forEach(r => { if (r.current) { r.current.style.transition = 'opacity .2s'; r.current.style.opacity = 0; } });
+    if (this.likeRef.current) { this.likeRef.current.style.transition = 'opacity .2s, transform .2s'; this.likeRef.current.style.opacity = 0; this.likeRef.current.style.transform = 'rotate(-9deg)'; }
+    if (this.nopeRef.current) { this.nopeRef.current.style.transition = 'opacity .2s, transform .2s'; this.nopeRef.current.style.opacity = 0; this.nopeRef.current.style.transform = 'rotate(9deg)'; }
+    this.ev('drag_cancelled');
   }
-  fly(dir){
+  fly(dir, viaGesture){
     const el = this.cardRef.current;
     if (el) {
       el.style.transition = 'transform .3s ease-out, opacity .3s ease-out';
       el.style.transform = 'translate(' + dir * 520 + 'px,60px) rotate(' + dir * 24 + 'deg)';
       el.style.opacity = '0';
     }
+    if (!this._firstActionLogged) {
+      this._firstActionLogged = true;
+      this.ev('first_action:' + (viaGesture ? 'жест' : 'кнопка'));
+    }
+    if (viaGesture && !this.state.hasSwiped) {
+      this.setState({hasSwiped:true});
+      try { localStorage.setItem('kadr-swipe-used', '1'); } catch(e){}
+    }
     setTimeout(() => this.commit(dir), 250);
   }
   clearCard(){
     const el = this.cardRef.current;
     if (el) { el.style.transition = 'none'; el.style.transform = 'none'; el.style.opacity = '1'; }
-    [this.likeRef, this.nopeRef].forEach(r => { if (r.current) r.current.style.opacity = 0; });
+    if (this.likeRef.current) { this.likeRef.current.style.opacity = 0; this.likeRef.current.style.transform = 'rotate(-9deg)'; }
+    if (this.nopeRef.current) { this.nopeRef.current.style.opacity = 0; this.nopeRef.current.style.transform = 'rotate(9deg)'; }
   }
   commit(dir){
     const s = this.state, f = s.deck[s.di];
@@ -570,7 +620,6 @@ class Component extends DCLogic {
   }
   playNow = () => { this.fly(1); };
   swipeLeft = () => { this.fly(-1); };
-  swipeRight = () => { this.fly(1); };
   saveForLater = () => {
     const s = this.state, f = s.deck[s.di];
     if (!f) return;
@@ -650,8 +699,9 @@ class Component extends DCLogic {
       third: this.card(s.deck[s.di + 2]) || {g:'#1a1a1a', img:''},
       hasNext: !!s.deck[s.di + 1], hasThird: !!s.deck[s.di + 2],
       cardRef: this.cardRef, likeRef: this.likeRef, nopeRef: this.nopeRef,
-      onDown: this.onDown, onMove: this.onMove, onUp: this.onUp,
-      swipeLeft: this.swipeLeft, swipeRight: this.swipeRight, decideForMe: this.decideForMe, playNow: this.playNow, saveForLater: this.saveForLater,
+      onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stopDrag: this.stopDrag,
+      swipeLeft: this.swipeLeft, decideForMe: this.decideForMe, playNow: this.playNow, saveForLater: this.saveForLater,
+      showSwipeHint: !s.hasSwiped,
       deckCounter: (this.props.showCounter ?? true) ? 'осталось ' + Math.max(0, s.deck.length - s.di) + ' из ' + s.deck.length : '',
       chips: [TIME_LABEL[s.ctx.time] || 'время не важно', COMPANY_LABEL[s.ctx.company] || 'один', s.ctx.mood ? MOOD_LABEL[s.ctx.mood] : 'настроение любое'],
       showFallback: !!s.fallback, fallbackText: s.fallback,
